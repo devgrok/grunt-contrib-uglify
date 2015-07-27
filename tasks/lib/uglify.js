@@ -46,7 +46,7 @@ exports.init = function(grunt) {
       var pathPrefix = relativePath ? relativePath + path.sep : '';
 
       // Convert paths to use forward slashes for sourcemap use in the browser
-      file = uriPath(pathPrefix + basename);
+      file = normalizeFilename(options, pathPrefix + basename);
 
       sourcesContent[file] = code;
       topLevel = UglifyJS.parse(code, {
@@ -189,6 +189,18 @@ exports.init = function(grunt) {
     grunt.verbose.ok();
 
     return result;
+  };
+
+  var normalizeFilename  = function(options, filename) {
+    filename = uriPath(filename);
+
+    if (options.sourceMapBasepath && filename.indexOf(options.sourceMapBasepath) === 0) {
+      filename = filename.substring(options.sourceMapBasepath.length);
+      if (filename.charAt(0) === '\\' || filename.charAt(0) === '/') {
+        filename = filename.substring(1);
+      }
+    }
+    return (options.sourceMapRootpath || "") + filename;
   };
 
   var getOutputOptions = function(options, dest) {

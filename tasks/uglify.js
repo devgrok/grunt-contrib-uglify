@@ -120,6 +120,15 @@ module.exports = function(grunt) {
         }
       }
 
+      if (typeof options.sourceMapBasepath === 'function') {
+        try {
+          options.sourceMapBasepath = options.sourceMapBasepath(src);
+        } catch (e) {
+          grunt.fail.warn(wrapError(e, 'Generating sourceMapBasepath failed.'));
+        }
+      }
+
+
       // Calculate the path from the dest file to the sourcemap for the
       // sourceMappingURL reference
       if (options.sourceMap) {
